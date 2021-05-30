@@ -4,19 +4,34 @@
 		<title>Sensores</title>
 	</head>
 	<body>
+		<div id="openweather-temp"></div>
 		<form action="javascript:void(0);" onsubmit="javascript:enviar();">
 			Luminosidad: <input type="number" id="luminosidad" min="0" max="100" required/><br />
 			Temperatura (&#8451;): <input type="number" id="temperatura" min="-50" max="100" required/><br />
 			<input type="submit" value="Actualizar sensores" />
 		</form>
 		<div>Persiana: <span id="persiana">Bajada</span></div>
-		<div>AC: <span id="ac">Apagado</span></div>
+		<div>AC: <span id="ac">Apagado</span></div><br><br>
+
+		<button onclick="openWeatherMapRequest()">OpenWeatherMap API</button>
 	</body>
 	<script src="/socket.io/socket.io.js"></script>
 	<script type="text/javascript">
 		var serviceURL = document.URL;
 		var socket = io.connect(serviceURL);
 		var estado = {persiana:false, ac:false};
+		var key = "2d1b110f61ea55a307d6d833f1b34480";
+
+		/*function getLocation() {
+			if (navigator.geolocation) {
+			  navigator.geolocation.getCurrentPosition(function(position){
+				  console.log(position.coords.latitude);
+			  });
+			} else {
+			  console.log("Geolocation is not supported by this browser.");
+			}
+		}
+		getLocation();*/
 
 		socket.emit('obtener-estado', {});
 
@@ -31,6 +46,18 @@
 			var temperatura = document.getElementById("temperatura").value;
 
 			socket.emit('sensores', {luminosidad:luminosidad, temperatura:temperatura});
+		}
+
+		function openWeatherMapRequest(){
+			setInterval(function(){
+				fetch('https://api.openweathermap.org/data/2.5/weather?q=Granada,ES&appid=' + key)  
+				.then(function(resp) { return resp.json() }) // Convert data to json
+				.then(function(data) {
+					console.log(data);
+					var celcius = Math.round(parseFloat(data.main.temp)-273.15);
+					console.log(celcius);
+				});
+			}, 3000);
 		}
 	</script>
 </html>
