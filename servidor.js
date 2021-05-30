@@ -11,6 +11,7 @@ var httpServer = http.createServer(
 	function(request, response) {
 		var uri = url.parse(request.url).pathname;
 		if (uri=="/") uri = "/sensores.html";
+		else if (uri=="/userpanel") uri = "/userPanel.html";
 		var fname = path.join(process.cwd(), uri);
 		fs.exists(fname, function(exists) {
 			if (exists) {
@@ -65,16 +66,18 @@ MongoClient.connect(db_url, { useUnifiedTopology: true }, function(err, db) {
 				collection.insertOne(data);
 				console.log(data);
 
-				if (agente)
+				if (agente !== undefined)
 					agente.emit('sensores', data);
 			});
 			client.on('persiana', function(data){
 				estado.persiana = data;
+				io.sockets.emit('emitir-estado', estado);
 				console.log(estado);
 			});
 
 			client.on('ac', function(data){
 				estado.ac = data;
+				io.sockets.emit('emitir-estado', estado);
 				console.log(estado);
 			});
 
@@ -83,18 +86,26 @@ MongoClient.connect(db_url, { useUnifiedTopology: true }, function(err, db) {
 			});
 
 			client.on('connect-agent', function(data) {
+				console.log("Agente conectado");
 				agente = client;
+				client.on('disconnect', function(){
+					agente = undefined;
+					console.log("Agente desconectado");
+				})
 			});
 
 			client.on('sensores-limite', function (data) {
+				io.sockets.emit('agent-msg', data);
 				console.log(data);
 			});
 
 			client.on('heat-warning', function (data) {
+				io.sockets.emit('agent-msg', data);
 				console.log(data);
 			});
 
 			client.on('brightness-warning', function (data) {
+				io.sockets.emit('agent-msg', data);
 				console.log(data);
 			});
 		})

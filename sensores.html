@@ -5,16 +5,26 @@
 	</head>
 	<body>
 		<form action="javascript:void(0);" onsubmit="javascript:enviar();">
-			Luminosidad: <input type="number" id="luminosidad" min="0" max="100" /><br />
-			Temperatura (&#8451;): <input type="number" id="temperatura" min="-50" max="100"/><br />
+			Luminosidad: <input type="number" id="luminosidad" min="0" max="100" required/><br />
+			Temperatura (&#8451;): <input type="number" id="temperatura" min="-50" max="100" required/><br />
 			<input type="submit" value="Actualizar sensores" />
 		</form>
-		<span id="resul"></span>
+		<div>Persiana: <span id="persiana">Bajada</span></div>
+		<div>AC: <span id="ac">Apagado</span></div>
 	</body>
 	<script src="/socket.io/socket.io.js"></script>
 	<script type="text/javascript">
 		var serviceURL = document.URL;
 		var socket = io.connect(serviceURL);
+		var estado = {persiana:false, ac:false};
+
+		socket.emit('obtener-estado', {});
+
+		socket.on('emitir-estado', function(data){
+			estado = data;
+			document.getElementById("ac").innerHTML = estado.ac ? 'Encendido' : 'Apagado';
+			document.getElementById("persiana").innerHTML = estado.persiana ? 'Subida' : 'Bajada';
+		});
 
 		function enviar() {
 			var luminosidad = document.getElementById("luminosidad").value;

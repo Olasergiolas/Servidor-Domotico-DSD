@@ -4,6 +4,7 @@
 		<title>Panel de Usuario</title>
 	</head>
 	<body>
+		<div id="agent-msg-container"></div>
 		<div>Luminosidad: <span id="luminosidad"></span></div>
 		<div>Temperatura: <span id="temperatura"></span></div>
 		<div>Persiana: <span id="persiana">Bajada</span></div>
@@ -31,6 +32,10 @@
 			console.log(data);
 			document.getElementById("luminosidad").innerHTML=data.luminosidad;
 			document.getElementById("temperatura").innerHTML=data.temperatura;
+		});
+
+		socket.on('agent-msg', function(data){
+			document.getElementById("agent-msg-container").innerHTML=data;
 		});
 
 		function set_ac(){
