@@ -6,9 +6,13 @@
 	<body>
 		<div>Luminosidad: <span id="luminosidad"></span></div>
 		<div>Temperatura: <span id="temperatura"></span></div>
+		<button onclick="set_ac()" value="ac">ac</button>
+		<button onclick="set_persiana()" value="persiana">persiana</button>
 	</body>
 	<script src="/socket.io/socket.io.js"></script>
 	<script type="text/javascript">
+		var estado = {persiana:false, ac:false};
+
 		var serviceURL = document.URL;
 		serviceURL = serviceURL.substring(0, serviceURL.lastIndexOf('/'));
 		var socket = io.connect(serviceURL);
@@ -17,5 +21,17 @@
 			document.getElementById("luminosidad").innerHTML=data.luminosidad;
 			document.getElementById("temperatura").innerHTML=data.temperatura;
 		});
+
+		function set_ac(){
+			estado.ac = !estado.ac;
+			console.log(estado.ac);
+			socket.emit('ac', estado.ac);
+		}
+
+		function set_persiana(){
+			estado.persiana = !estado.persiana;
+			console.log(estado.persiana);
+			socket.emit('persiana', estado.persiana);
+		}
 	</script>
 </html>

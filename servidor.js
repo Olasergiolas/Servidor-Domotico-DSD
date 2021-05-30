@@ -39,6 +39,8 @@ var httpServer = http.createServer(
 	}
 );
 
+var estado = {persiana:false, ac:false};
+
 var db_url = "mongodb://localhost:27017/";
 MongoClient.connect(db_url, { useUnifiedTopology: true }, function(err, db) {
 	if (err) throw err;
@@ -61,7 +63,16 @@ MongoClient.connect(db_url, { useUnifiedTopology: true }, function(err, db) {
 				data.timestamp = new Date();
 				collection.insertOne(data);
 				console.log(data);
-			})
+			});
+			client.on('persiana', function(data){
+				estado.persiana = data;
+				console.log(estado);
+			});
+
+			client.on('ac', function(data){
+				estado.ac = data;
+				console.log(estado);
+			});
 		})
 	});
 
