@@ -13,24 +13,5 @@
 		<div>AC: <span id="ac">Apagado</span></div>
 	</body>
 	<script src="/socket.io/socket.io.js"></script>
-	<script type="text/javascript">
-		var serviceURL = document.URL;
-		var socket = io.connect(serviceURL);
-		var estado = {persiana:false, ac:false};
-
-		socket.emit('obtener-estado', {});
-
-		socket.on('emitir-estado', function(data){
-			estado = data;
-			document.getElementById("ac").innerHTML = estado.ac ? 'Encendido' : 'Apagado';
-			document.getElementById("persiana").innerHTML = estado.persiana ? 'Subida' : 'Bajada';
-		});
-
-		function enviar() {
-			var luminosidad = document.getElementById("luminosidad").value;
-			var temperatura = document.getElementById("temperatura").value;
-
-			socket.emit('sensores', {luminosidad:luminosidad, temperatura:temperatura});
-		}
-	</script>
+	<script src="./JS/sensores.js"></script>
 </html>
