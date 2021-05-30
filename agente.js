@@ -1,24 +1,33 @@
-var socketio = require("socket.io");
+const { Socket } = require("socket.io");
+const io = require("socket.io-client");
 
-var estado = {persiana:false, ac:false};
+var addr = process.argv.slice(2);
+if (addr.length != 2){
+    console.log("Uso: node[js] agente.js host port");
+    process.exit(-1);
+}
+var socket = io.connect('http://' + addr[0] + ':' + addr[1]);
 
-var serviceURL = document.URL;
-serviceURL = serviceURL.substring(0, serviceURL.lastIndexOf('/'));
-var socket = io.connect(serviceURL);
-socket.on('sensor-update', function(data){
-    console.log(data);
-    document.getElementById("luminosidad").innerHTML=data.luminosidad;
-    document.getElementById("temperatura").innerHTML=data.temperatura;
+socket.on('connect_error', function () {
+    console.log("Error de conexión con el servidor");
+    process.exit(-1);
 });
 
-function set_ac(){
-    estado.ac = !estado.ac;
-    document.getElementById("ac").innerHTML = estado.ac ? 'Encendido' : 'Apagado';
-    socket.emit('ac', estado.ac);
-}
+socket.emit('connect-agent', {});
+socket.on('sensores', function(data){
+    console.log(data);
+    var temp = parseInt(data.temperatura, 10);
+    var luminosidad = parseInt(data.luminosidad, 10)
 
-function set_persiana(){
-    estado.persiana = !estado.persiana;
-    document.getElementById("persiana").innerHTML = estado.persiana ? 'Subida' : 'Bajada';
-    socket.emit('persiana', estado.persiana);
-}
+    if (temp >= 30 && luminosidad >= 80){
+        socket.emit("sensores-limite", "Se han sobrepasado los umbrales " +
+        "de los sensores, cerrando persianas...");
+        socket.emit('persiana', false);
+    }
+    
+    else if (temp >= 30)
+        socket.emit("heat-warning", "Se han sobrepasado los 30ºC")
+
+    else if (luminosidad >= 80)
+        socket.emit("brightness-warning", "Se ha excedido el límite de luminosidad");
+});
