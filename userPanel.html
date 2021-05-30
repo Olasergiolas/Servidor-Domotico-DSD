@@ -1,0 +1,21 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Panel de Usuario</title>
+	</head>
+	<body>
+		<div>Luminosidad: <span id="luminosidad"></span></div>
+		<div>Temperatura: <span id="temperatura"></span></div>
+	</body>
+	<script src="/socket.io/socket.io.js"></script>
+	<script type="text/javascript">
+		var serviceURL = document.URL;
+		serviceURL = serviceURL.substring(0, serviceURL.lastIndexOf('/'));
+		var socket = io.connect(serviceURL);
+		socket.on('sensor-update', function(data){
+			console.log(data);
+			document.getElementById("luminosidad").innerHTML=data.luminosidad;
+			document.getElementById("temperatura").innerHTML=data.temperatura;
+		});
+	</script>
+</html>

@@ -1,0 +1,26 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Sensores</title>
+	</head>
+	<body>
+		<form action="javascript:void(0);" onsubmit="javascript:enviar();">
+			Luminosidad: <input type="number" id="luminosidad" min="0" max="100" /><br />
+			Temperatura (&#8451;): <input type="number" id="temperatura" min="-50" max="100"/><br />
+			<input type="submit" value="Actualizar sensores" />
+		</form>
+		<span id="resul"></span>
+	</body>
+	<script src="/socket.io/socket.io.js"></script>
+	<script type="text/javascript">
+		var serviceURL = document.URL;
+		var socket = io.connect(serviceURL);
+
+		function enviar() {
+			var luminosidad = document.getElementById("luminosidad").value;
+			var temperatura = document.getElementById("temperatura").value;
+
+			socket.emit('sensores', {luminosidad:luminosidad, temperatura:temperatura});
+		}
+	</script>
+</html>
