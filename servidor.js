@@ -73,6 +73,10 @@ MongoClient.connect(db_url, { useUnifiedTopology: true }, function(err, db) {
 				estado.ac = data;
 				console.log(estado);
 			});
+
+			client.on('obtener-estado', function(){
+				client.emit('emitir-estado', estado);
+			});
 		})
 	});
 

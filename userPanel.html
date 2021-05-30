@@ -6,16 +6,27 @@
 	<body>
 		<div>Luminosidad: <span id="luminosidad"></span></div>
 		<div>Temperatura: <span id="temperatura"></span></div>
+		<div>Persiana: <span id="persiana">Bajada</span></div>
+		<div>AC: <span id="ac">Apagado</span></div>
+
 		<button onclick="set_ac()" value="ac">ac</button>
 		<button onclick="set_persiana()" value="persiana">persiana</button>
 	</body>
 	<script src="/socket.io/socket.io.js"></script>
 	<script type="text/javascript">
 		var estado = {persiana:false, ac:false};
-
 		var serviceURL = document.URL;
 		serviceURL = serviceURL.substring(0, serviceURL.lastIndexOf('/'));
 		var socket = io.connect(serviceURL);
+
+		socket.emit('obtener-estado', {});
+
+		socket.on('emitir-estado', function(data){
+			estado = data;
+			document.getElementById("ac").innerHTML = estado.ac ? 'Encendido' : 'Apagado';
+			document.getElementById("persiana").innerHTML = estado.persiana ? 'Subida' : 'Bajada';
+		});
+
 		socket.on('sensor-update', function(data){
 			console.log(data);
 			document.getElementById("luminosidad").innerHTML=data.luminosidad;
@@ -24,13 +35,13 @@
 
 		function set_ac(){
 			estado.ac = !estado.ac;
-			console.log(estado.ac);
+			document.getElementById("ac").innerHTML = estado.ac ? 'Encendido' : 'Apagado';
 			socket.emit('ac', estado.ac);
 		}
 
 		function set_persiana(){
 			estado.persiana = !estado.persiana;
-			console.log(estado.persiana);
+			document.getElementById("persiana").innerHTML = estado.persiana ? 'Subida' : 'Bajada';
 			socket.emit('persiana', estado.persiana);
 		}
 	</script>
