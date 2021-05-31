@@ -1,5 +1,6 @@
 html {
     font-family: Verdana, sans-serif;
+    height: 100%;
 }
 
 
@@ -139,6 +140,7 @@ body {
 
 
 .option {
+    border-radius: 10px;
     font-size: min(3vw, 1.4em);
     width: 40vw;
     max-width: 500px;
@@ -190,9 +192,26 @@ body {
 }
 
 
-#temperatura{
+#registro-option{
+    display: flex;
+    overflow: auto;
+    flex: 1;
 }
 
+
+#box{
+    margin-left: 20px;
+    margin-right: 20px;
+    flex: 1 1 auto;
+    overflow-y: auto;
+    min-height: 0px;
+}
+
+
+.registro{
+    font-size: 15px;
+    margin-bottom: 20px;
+}
 
 
 @media (max-width: 600px) {                  
