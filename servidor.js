@@ -41,7 +41,6 @@ var httpServer = http.createServer(
 );
 
 var estado = {persiana:false, ac:{on:false, modo:"Frío"}};
-var agente;
 
 var db_url = "mongodb://localhost:27017/";
 MongoClient.connect(db_url, { useUnifiedTopology: true }, function(err, db) {
@@ -59,12 +58,11 @@ MongoClient.connect(db_url, { useUnifiedTopology: true }, function(err, db) {
 		
 
 		io.sockets.on('connection', function(client) {
+			console.log("Nuevo cliente");
 			client.on('sensores', function(data){
 				data.timestamp = new Date();
 				io.sockets.emit('sensor-update', data);
 				collection.insertOne(data);
-				if (agente !== undefined)
-					agente.emit('sensores', data);
 			});
 			client.on('persiana', function(data){
 				estado.persiana = data;
@@ -78,13 +76,6 @@ MongoClient.connect(db_url, { useUnifiedTopology: true }, function(err, db) {
 
 			client.on('obtener-estado', function(){
 				client.emit('emitir-estado', estado);
-			});
-
-			client.on('connect-agent', function(data) {
-				agente = client;
-				client.on('disconnect', function(){
-					agente = undefined;
-				})
 			});
 
 			client.on('sensores-limite', function (data) {

@@ -13,8 +13,12 @@ socket.on('connect_error', function () {
     process.exit(-1);
 });
 
+socket.on('connect', function(){
+    console.log("Conexión establecida con el servidor!");
+})
+
 socket.emit('connect-agent', {});
-socket.on('sensores', function(data){
+socket.on('sensor-update', function(data){
     var temp = parseInt(data.temperatura, 10);
     var luminosidad = parseInt(data.luminosidad, 10);
     var humedad = parseInt(data.humedad, 10);

@@ -44,23 +44,24 @@
 	</body>
 	<script src="/socket.io/socket.io.js"></script>
 	<script type="text/javascript">
+		function getLocation() {
+			if (navigator.geolocation) {
+			  navigator.geolocation.getCurrentPosition(function(position){
+				  coord = position;
+			  });
+			} else {
+			  console.log("Geolocalización no disponible.");
+			}
+		}
+		
 		var serviceURL = document.URL;
 		var socket = io.connect(serviceURL);
 		var estado = {persiana:false, ac:false};
 		var key = "2d1b110f61ea55a307d6d833f1b34480";
+		var coord;
 		var owm_interval;
-
-		/*function getLocation() {
-			if (navigator.geolocation) {
-			  navigator.geolocation.getCurrentPosition(function(position){
-				  console.log(position.coords.latitude);
-			  });
-			} else {
-			  console.log("Geolocation is not supported by this browser.");
-			}
-		}
-		getLocation();*/
-
+		
+		getLocation();
 		socket.emit('obtener-estado', {});
 
 		socket.on('emitir-estado', function(data){
@@ -80,7 +81,12 @@
 
 		function enableOpenWeatherMap(){
 			owm_interval = setInterval(function(){
-				fetch('https://api.openweathermap.org/data/2.5/weather?q=Granada,ES&appid=' + key)  
+				var api_url = 'https://api.openweathermap.org/data/2.5/weather?q=Granada,ES&appid=' + key;
+				if (coord)
+					api_url = 'https://api.openweathermap.org/data/2.5/weather?lat=' + coord.coords.latitude + '&lon=' + coord.coords.longitude + '&appid=' + key;
+				
+
+				fetch(api_url)  
 				.then(function(resp) { return resp.json() })
 				.then(function(data) {
 					var grados_celsius = Math.round(parseFloat(data.main.temp)-273.15);
