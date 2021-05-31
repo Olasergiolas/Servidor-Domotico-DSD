@@ -72,6 +72,7 @@
 			console.log(data);
 			document.getElementById("luminosidad").innerHTML=data.luminosidad;
 			document.getElementById("temperatura").innerHTML=data.temperatura;
+			addRegistro(data);
 		});
 
 		socket.on('agent-msg', function(data){
@@ -79,18 +80,7 @@
 		});
 
 		socket.on('emitir-registro', function(data){
-			var contenedor = document.getElementById("box")
-			data.forEach(function(element){
-				var cadena = "Luminosidad: " + element.luminosidad + 
-					", temperatura: " + element.temperatura + ", timestamp: " + 
-					element.timestamp;
-				var contenedor_elemento = document.createElement('div');
-				var clase = document.createAttribute("class");
-				clase.value = "registro";
-				contenedor_elemento.setAttributeNode(clase);
-				contenedor_elemento.innerHTML = cadena;
-				contenedor.appendChild(contenedor_elemento);
-			});
+			data.forEach(addRegistro);
 		});
 
 		function set_ac(){
@@ -110,6 +100,19 @@
 		function updateBotones(){
 			document.getElementById("ac_btn").innerHTML = estado.ac ? 'Apagar AC' : 'Encender AC';
 			document.getElementById("persiana_btn").innerHTML = estado.persiana ? 'Bajar persiana' : 'Subir persiana';
+		}
+
+		function addRegistro(element){
+			var contenedor = document.getElementById("box");
+			var cadena = "Luminosidad: " + element.luminosidad + 
+			", temperatura: " + element.temperatura + ", timestamp: " + 
+			element.timestamp;
+			var contenedor_elemento = document.createElement('div');
+			var clase = document.createAttribute("class");
+			clase.value = "registro";
+			contenedor_elemento.setAttributeNode(clase);
+			contenedor_elemento.innerHTML = cadena;
+			contenedor.appendChild(contenedor_elemento);
 		}
 	</script>
 </html>

@@ -61,8 +61,8 @@ MongoClient.connect(db_url, { useUnifiedTopology: true }, function(err, db) {
 		io.sockets.on('connection', function(client) {
 			console.log("CONEXIÓN");
 			client.on('sensores', function(data){
-				io.sockets.emit('sensor-update', data);
 				data.timestamp = new Date();
+				io.sockets.emit('sensor-update', data);
 				collection.insertOne(data);
 				console.log(data);
 
