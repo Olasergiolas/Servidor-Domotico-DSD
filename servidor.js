@@ -109,28 +109,18 @@ MongoClient.connect(db_url, { useUnifiedTopology: true }, function(err, db) {
 				console.log(data);
 			});
 
-			client.on('obtener-registro', function (){
-				//client.emit('emitir-registro', collection.find());
+			client.on('general-warning', function (data) {
+				io.sockets.emit('agent-msg', data);
+				console.log(data);
+			});
 
+			client.on('obtener-registro', function (){
 				collection.find().toArray(function(err, results){
 					client.emit('emitir-registro', results);
 				});
-
-				//console.log(run(collection));
-			})
-		})
+			});
+		});
 	});
-
 
 	console.log("Servicio HTTP iniciado");
 });
-
-async function run(collection) {
-	res = [];
-	const cursor = collection.find();
-	while (await cursor.hasNext()) {
-		res.push(await cursor.next());
-	  //console.log(await cursor.next());
-	}
-	return res;
-  }

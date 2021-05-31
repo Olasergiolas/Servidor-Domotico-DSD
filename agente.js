@@ -31,3 +31,10 @@ socket.on('sensores', function(data){
     else if (luminosidad >= 80)
         socket.emit("brightness-warning", "Se ha excedido el límite de luminosidad");
 });
+
+socket.on('emitir-estado', function (data) {
+    if (data.ac && data.persiana)
+        socket.emit("general-warning", "Posible malgasto energético: AC encendido y persiana subida");
+    else
+        socket.emit("general-warning", "");
+});
