@@ -17,6 +17,7 @@
             </div>
 
 			<div id="panel_principal" class="columna">
+				<h2 id="agent_warning"></h2>
 				<div class="fila_options">
 					<div class="option" id="light-option">
 						<img class="option_img" src="./img/idea.png" alt="lightbulb">
@@ -76,7 +77,8 @@
 		});
 
 		socket.on('agent-msg', function(data){
-			document.getElementById("agent-msg-container").innerHTML=data;
+			var contenedor = document.getElementById("agent_warning");
+			contenedor.innerHTML = data;
 		});
 
 		socket.on('emitir-registro', function(data){

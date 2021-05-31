@@ -1,19 +1,44 @@
 <html>
 	<head>
+		<link href="./styles/style.css" rel="stylesheet" type="text/css">
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Sensores</title>
 	</head>
 	<body>
-		<div id="openweather-temp"></div>
-		<form action="javascript:void(0);" onsubmit="javascript:enviar();">
-			Luminosidad: <input type="number" id="luminosidad" min="0" max="100" required/><br />
-			Temperatura (&#8451;): <input type="number" id="temperatura" min="-50" max="100" required/><br />
-			<input type="submit" value="Actualizar sensores" />
-		</form>
-		<div>Persiana: <span id="persiana">Bajada</span></div>
-		<div>AC: <span id="ac">Apagado</span></div><br><br>
+		<header id="cabecera">
+            <a id="enlace_logo" href="./userPanel.html">
+                <img id="logo" src="../img/logo.png" alt="logo">
+            </a>
+        </header>
 
-		<button onclick="openWeatherMapRequest()">OpenWeatherMap API</button>
+        <div id="fila_principal" class="fila">
+            <div id="panel_lateral_izquierdo" class="columna">
+            </div>
+
+			<div id="panel_principal" class="columna">
+				<div class="fila_options">
+					<div id="sensores" class="option">
+						<div id="openweather-temp"></div>
+						<h4>Formulario de sensores</h4>
+						<form id="formulario" action="javascript:void(0);" onsubmit="javascript:enviar();">
+							Luminosidad: <input type="number" id="luminosidad" min="0" max="100" required/><br />
+							Temperatura (&#8451;): <input type="number" id="temperatura" min="-50" max="100" required/><br />
+							<input id="sensores_btn" type="submit" value="Actualizar sensores" />
+						</form>
+						
+						<h4>Utilizar API de OpenWeatherMap</h4>
+						<label id="toggle_owm" class="switch">
+							<input id="toggle_owm_actuador" type="checkbox" onclick="toggleOpenWeatherMap();">
+							<span class="slider round"></span>
+						</label>
+						<div class="estado_actuadores">
+							<div>Persiana: <span id="persiana">Bajada</span></div>
+							<div>AC: <span id="ac">Apagado</span></div><br><br>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 	</body>
 	<script src="/socket.io/socket.io.js"></script>
 	<script type="text/javascript">
@@ -21,6 +46,7 @@
 		var socket = io.connect(serviceURL);
 		var estado = {persiana:false, ac:false};
 		var key = "2d1b110f61ea55a307d6d833f1b34480";
+		var owm_interval;
 
 		/*function getLocation() {
 			if (navigator.geolocation) {
@@ -48,16 +74,31 @@
 			socket.emit('sensores', {luminosidad:luminosidad, temperatura:temperatura});
 		}
 
-		function openWeatherMapRequest(){
-			setInterval(function(){
+		function enableOpenWeatherMap(){
+			owm_interval = setInterval(function(){
 				fetch('https://api.openweathermap.org/data/2.5/weather?q=Granada,ES&appid=' + key)  
-				.then(function(resp) { return resp.json() }) // Convert data to json
+				.then(function(resp) { return resp.json() })
 				.then(function(data) {
 					console.log(data);
-					var celcius = Math.round(parseFloat(data.main.temp)-273.15);
-					console.log(celcius);
+					var grados_celsius = Math.round(parseFloat(data.main.temp)-273.15);
+					var luminosidad = Math.round(data.visibility/100);
+					socket.emit('sensores', {luminosidad:luminosidad, temperatura:grados_celsius});
 				});
 			}, 3000);
+		}
+
+		function toggleOpenWeatherMap(){
+			var estado_owm = document.getElementById("toggle_owm_actuador").checked;
+
+			if (estado_owm)
+				enableOpenWeatherMap();
+			
+			else{
+				if (owm_interval !== undefined){
+					clearInterval(owm_interval);
+					owm_interval = undefined;
+				}
+			}
 		}
 	</script>
 </html>
