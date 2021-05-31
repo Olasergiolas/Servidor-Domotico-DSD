@@ -1,17 +1,49 @@
 <html>
 	<head>
+        <meta charset="UTF-8">
+		<link href="./styles/style.css" rel="stylesheet" type="text/css">
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Panel de Usuario</title>
 	</head>
 	<body>
-		<div id="agent-msg-container"></div>
-		<div>Luminosidad: <span id="luminosidad"></span></div>
-		<div>Temperatura: <span id="temperatura"></span></div>
-		<div>Persiana: <span id="persiana">Bajada</span></div>
-		<div>AC: <span id="ac">Apagado</span></div>
+        <header id="cabecera">
+            <a id="enlace_logo" href="index.php">
+                <img id="logo" src="../img/logo.png" alt="logo">
+            </a>
+        </header>
 
-		<button onclick="set_ac()" value="ac">ac</button>
-		<button onclick="set_persiana()" value="persiana">persiana</button>
+        <div id="fila_principal" class="fila">
+            <div id="panel_lateral_izquierdo" class="columna">
+            </div>
+
+			<div id="panel_principal" class="columna">
+				<div class="fila_options">
+					<div class="option" id="light-option">
+						<img class="option_img" src="./img/idea.png" alt="lightbulb">
+						<div id="light-info">
+							<div><b>Luminosidad: </b><span id="luminosidad">Sin información</span></div>
+							<div><b>Persiana: </b><span id="persiana">Bajada</span></div>
+						</div>
+						<button id="persiana_btn" class="option_btn" onclick="set_persiana()">Subir persiana</button>
+					</div>
+					<div class="option" id="tmp-option">
+						<img class="option_img" src="./img/weather.png" alt="hot-cold">
+						<div id="tmp-info">
+							<div><b>Temperatura: </b><span id="temperatura">Sin información</span></div>
+							<div><b>AC: </b><span id="ac">Apagado</span></div>
+						</div>
+						<button id="ac_btn" class="option_btn" onclick="set_ac()">Encender AC</button>
+					</div>
+				</div>
+			</div>
+
+            <div id="panel_lateral_derecho">
+            </div>
+        </div>
+
+        <footer id="pie">
+            <p id="pie_body">Made with love! By @Olasergiolas</p>
+        </footer>
 	</body>
 	<script src="/socket.io/socket.io.js"></script>
 	<script type="text/javascript">
@@ -21,11 +53,14 @@
 		var socket = io.connect(serviceURL);
 
 		socket.emit('obtener-estado', {});
+		
+
 
 		socket.on('emitir-estado', function(data){
 			estado = data;
 			document.getElementById("ac").innerHTML = estado.ac ? 'Encendido' : 'Apagado';
 			document.getElementById("persiana").innerHTML = estado.persiana ? 'Subida' : 'Bajada';
+			updateBotones();
 		});
 
 		socket.on('sensor-update', function(data){
@@ -41,13 +76,20 @@
 		function set_ac(){
 			estado.ac = !estado.ac;
 			document.getElementById("ac").innerHTML = estado.ac ? 'Encendido' : 'Apagado';
+			updateBotones();
 			socket.emit('ac', estado.ac);
 		}
 
 		function set_persiana(){
 			estado.persiana = !estado.persiana;
 			document.getElementById("persiana").innerHTML = estado.persiana ? 'Subida' : 'Bajada';
+			updateBotones();
 			socket.emit('persiana', estado.persiana);
+		}
+
+		function updateBotones(){
+			document.getElementById("ac_btn").innerHTML = estado.ac ? 'Apagar AC' : 'Encender AC';
+			document.getElementById("persiana_btn").innerHTML = estado.persiana ? 'Bajar persiana' : 'Subir persiana';
 		}
 	</script>
 </html>
