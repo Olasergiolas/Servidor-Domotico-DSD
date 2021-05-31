@@ -30,10 +30,17 @@
 					<div class="option" id="tmp-option">
 						<img class="option_img" src="./img/weather.png" alt="hot-cold">
 						<div id="tmp-info">
-							<div><b>Temperatura: </b><span id="temperatura">Sin información</span></div>
+							<div><b>Temperatura (&#8451;): </b><span id="temperatura">Sin información</span></div>
 							<div><b>AC: </b><span id="ac">Apagado</span></div>
 						</div>
 						<button id="ac_btn" class="option_btn" onclick="set_ac()">Encender AC</button>
+					</div>
+
+					<div class="option">
+						<img class="option_img" src="./img/humidity.png" alt="humidity-icon">
+						<div id="humedad-info">
+							<div><b>Humedad (%): </b><span id="humedad">Sin información</span></div>
+						</div>
 					</div>
 
 					<div id="registro-option" class="option">
@@ -73,6 +80,7 @@
 			console.log(data);
 			document.getElementById("luminosidad").innerHTML=data.luminosidad;
 			document.getElementById("temperatura").innerHTML=data.temperatura;
+			document.getElementById("humedad").innerHTML=data.humedad;
 			addRegistro(data);
 		});
 
@@ -107,7 +115,7 @@
 		function addRegistro(element){
 			var contenedor = document.getElementById("box");
 			var cadena = "Luminosidad: " + element.luminosidad + 
-			", temperatura: " + element.temperatura + ", timestamp: " + 
+			", temperatura: " + element.temperatura + ", humedad: " + element.humedad + ", timestamp: " + 
 			element.timestamp;
 			var contenedor_elemento = document.createElement('div');
 			var clase = document.createAttribute("class");

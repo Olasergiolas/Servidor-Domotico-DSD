@@ -23,6 +23,7 @@
 						<form id="formulario" action="javascript:void(0);" onsubmit="javascript:enviar();">
 							Luminosidad: <input type="number" id="luminosidad" min="0" max="100" required/><br />
 							Temperatura (&#8451;): <input type="number" id="temperatura" min="-50" max="100" required/><br />
+							Humedad (%): <input type="number" id="humedad" min="0" max="100" required/><br />
 							<input id="sensores_btn" type="submit" value="Actualizar sensores" />
 						</form>
 						
@@ -70,8 +71,9 @@
 		function enviar() {
 			var luminosidad = document.getElementById("luminosidad").value;
 			var temperatura = document.getElementById("temperatura").value;
+			var humedad = document.getElementById("humedad").value;
 
-			socket.emit('sensores', {luminosidad:luminosidad, temperatura:temperatura});
+			socket.emit('sensores', {luminosidad:luminosidad, temperatura:temperatura, humedad:humedad});
 		}
 
 		function enableOpenWeatherMap(){
@@ -82,7 +84,8 @@
 					console.log(data);
 					var grados_celsius = Math.round(parseFloat(data.main.temp)-273.15);
 					var luminosidad = Math.round(data.visibility/100);
-					socket.emit('sensores', {luminosidad:luminosidad, temperatura:grados_celsius});
+					var humedad = data.main.humidity;
+					socket.emit('sensores', {luminosidad:luminosidad, temperatura:grados_celsius, humedad:humedad});
 				});
 			}, 3000);
 		}

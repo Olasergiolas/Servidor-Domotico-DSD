@@ -256,6 +256,14 @@ body {
 }
 
 
+#humedad-info{
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+
 /******  Estilo slider *****/
 .switch {
   position: relative;
