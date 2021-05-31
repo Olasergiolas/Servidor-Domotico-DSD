@@ -32,6 +32,7 @@
 						<div id="tmp-info">
 							<div><b>Temperatura (&#8451;): </b><span id="temperatura">Sin información</span></div>
 							<div><b>AC: </b><span id="ac">Apagado</span></div>
+							<div><b>Modo AC: </b><span id="modo_ac"></span></div>
 						</div>
 						<button id="ac_btn" class="option_btn" onclick="set_ac()">Encender AC</button>
 					</div>
@@ -55,12 +56,12 @@
         </div>
 
         <footer id="pie">
-            <p id="pie_body">Made with love! By @Olasergiolas</p>
+            <p id="pie_body">Made with love! By <a id="github" href="https://github.com/Olasergiolas">@Olasergiolas</a></p>
         </footer>
 	</body>
 	<script src="/socket.io/socket.io.js"></script>
 	<script type="text/javascript">
-		var estado = {persiana:false, ac:false};
+		var estado = {persiana:false, ac:{on:false, modo:"Frío"}};
 		var serviceURL = document.URL;
 		serviceURL = serviceURL.substring(0, serviceURL.lastIndexOf('/'));
 		var socket = io.connect(serviceURL);
@@ -71,13 +72,13 @@
 
 		socket.on('emitir-estado', function(data){
 			estado = data;
-			document.getElementById("ac").innerHTML = estado.ac ? 'Encendido' : 'Apagado';
+			document.getElementById("ac").innerHTML = estado.ac.on ? 'Encendido' : 'Apagado';
+			document.getElementById("modo_ac").innerHTML = estado.ac.modo;
 			document.getElementById("persiana").innerHTML = estado.persiana ? 'Subida' : 'Bajada';
 			updateBotones();
 		});
 
 		socket.on('sensor-update', function(data){
-			console.log(data);
 			document.getElementById("luminosidad").innerHTML=data.luminosidad;
 			document.getElementById("temperatura").innerHTML=data.temperatura;
 			document.getElementById("humedad").innerHTML=data.humedad;
@@ -94,10 +95,10 @@
 		});
 
 		function set_ac(){
-			estado.ac = !estado.ac;
-			document.getElementById("ac").innerHTML = estado.ac ? 'Encendido' : 'Apagado';
+			estado.ac.on = !estado.ac.on;
+			document.getElementById("ac").innerHTML = estado.ac.on ? 'Encendido' : 'Apagado';
 			updateBotones();
-			socket.emit('ac', estado.ac);
+			socket.emit('ac', {on:estado.ac.on, modo:estado.ac.modo});
 		}
 
 		function set_persiana(){
@@ -108,7 +109,7 @@
 		}
 
 		function updateBotones(){
-			document.getElementById("ac_btn").innerHTML = estado.ac ? 'Apagar AC' : 'Encender AC';
+			document.getElementById("ac_btn").innerHTML = estado.ac.on ? 'Apagar AC' : 'Encender AC';
 			document.getElementById("persiana_btn").innerHTML = estado.persiana ? 'Bajar persiana' : 'Subir persiana';
 		}
 

@@ -40,7 +40,7 @@ var httpServer = http.createServer(
 	}
 );
 
-var estado = {persiana:false, ac:false};
+var estado = {persiana:false, ac:{on:false, modo:"Frío"}};
 var agente;
 
 var db_url = "mongodb://localhost:27017/";
@@ -59,26 +59,21 @@ MongoClient.connect(db_url, { useUnifiedTopology: true }, function(err, db) {
 		
 
 		io.sockets.on('connection', function(client) {
-			console.log("CONEXIÓN");
 			client.on('sensores', function(data){
 				data.timestamp = new Date();
 				io.sockets.emit('sensor-update', data);
 				collection.insertOne(data);
-				console.log(data);
-
 				if (agente !== undefined)
 					agente.emit('sensores', data);
 			});
 			client.on('persiana', function(data){
 				estado.persiana = data;
 				io.sockets.emit('emitir-estado', estado);
-				console.log(estado);
 			});
 
 			client.on('ac', function(data){
 				estado.ac = data;
 				io.sockets.emit('emitir-estado', estado);
-				console.log(estado);
 			});
 
 			client.on('obtener-estado', function(){
@@ -86,32 +81,26 @@ MongoClient.connect(db_url, { useUnifiedTopology: true }, function(err, db) {
 			});
 
 			client.on('connect-agent', function(data) {
-				console.log("Agente conectado");
 				agente = client;
 				client.on('disconnect', function(){
 					agente = undefined;
-					console.log("Agente desconectado");
 				})
 			});
 
 			client.on('sensores-limite', function (data) {
 				io.sockets.emit('agent-msg', data);
-				console.log(data);
 			});
 
 			client.on('heat-warning', function (data) {
 				io.sockets.emit('agent-msg', data);
-				console.log(data);
 			});
 
 			client.on('brightness-warning', function (data) {
 				io.sockets.emit('agent-msg', data);
-				console.log(data);
 			});
 
 			client.on('general-warning', function (data) {
 				io.sockets.emit('agent-msg', data);
-				console.log(data);
 			});
 
 			client.on('obtener-registro', function (){

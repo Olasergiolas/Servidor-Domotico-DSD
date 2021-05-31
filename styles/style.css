@@ -215,12 +215,12 @@ body {
 
 
 #sensores{
+    font-size: large;
     width: 50vw;
     max-width: 700px;
     min-width: 300px;
     min-height: 500px;
-    height: 51vw;
-    max-height: 610px;
+    height: 60vw;
 }
 
 
@@ -261,6 +261,12 @@ body {
     margin-right: 20px;
     margin-top: auto;
     margin-bottom: auto;
+}
+
+
+#github{
+    color: black;
+    text-decoration: none;
 }
 
 
