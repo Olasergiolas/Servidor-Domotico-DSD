@@ -32,6 +32,10 @@
 							<input id="toggle_owm_actuador" type="checkbox" onclick="toggleOpenWeatherMap();">
 							<span class="slider round"></span>
 						</label>
+						<div id="coordenadas">
+							Latitud: <span id="lat"></span><br>
+							Longitud: <span id="lon"></span><br><br>
+						</div>
 						<div class="estado_actuadores">
 							<div>Persiana: <span id="persiana">Bajada</span></div>
 							<div>AC: <span id="ac">Apagado</span></div><br><br>
@@ -47,13 +51,16 @@
 		function getLocation() {
 			if (navigator.geolocation) {
 			  navigator.geolocation.getCurrentPosition(function(position){
-				  coord = position;
+					coord = position;
+					document.getElementById("coordenadas").style.display = "block";
+					document.getElementById("lat").innerHTML = coord.coords.latitude
+					document.getElementById("lon").innerHTML = coord.coords.longitude;
 			  });
 			} else {
 			  console.log("Geolocalización no disponible.");
 			}
 		}
-		
+
 		var serviceURL = document.URL;
 		var socket = io.connect(serviceURL);
 		var estado = {persiana:false, ac:false};

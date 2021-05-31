@@ -136,6 +136,8 @@ body {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    align-content: center;
+    height: 100%;
 }
 
 
@@ -215,12 +217,9 @@ body {
 
 
 #sensores{
-    font-size: large;
-    width: 50vw;
-    max-width: 700px;
-    min-width: 300px;
-    min-height: 500px;
-    height: 60vw;
+    font-size: min(1.2em, 10vw);
+    height: 80vh;
+    max-height: none;
 }
 
 
@@ -267,6 +266,11 @@ body {
 #github{
     color: black;
     text-decoration: none;
+}
+
+
+#coordenadas{
+    display: none;
 }
 
 
